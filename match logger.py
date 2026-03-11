@@ -15,8 +15,9 @@ load_dotenv()
 #   CONSTANTS
 #  ===========
 
-STATS_FILE = "stats.json"
-HISTORY_FILE = "match_history.json"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+STATS_FILE = os.path.join(BASE_DIR, "stats.json")
+HISTORY_FILE = os.path.join(BASE_DIR, "match_history.json")
 
 #  ===================================================================================
 #   PLAYER CLASS MAKES IT SO THAT EACH PLAYER'S STATS ARE ENCAPSULATED IN AN 'OBJECT'
@@ -95,11 +96,11 @@ def get_assist_emojis(count):
 def get_suffix(count, type="goal"):
     # Returns a special label if a player scored/assisted multiple times
     if count >= 4:
-        return " *ROUT* ‼️‼️" if type == "goal" else " *ROUT OF ASSISTS*‼️‼️"
+        return " *ROUT*" if type == "goal" else " *ROUT OF ASSISTS*"
     elif count == 3:
-        return " *HATTRICK*‼️❗" if type == "goal" else " *HATTRICK OF ASSISTS*‼️❗"
+        return " *HATTRICK*" if type == "goal" else " *HATTRICK OF ASSISTS*"
     elif count == 2:
-        return " *BRACE*‼️"
+        return " *BRACE*"
     return ""
 
 #  ==========================================================================================
@@ -249,16 +250,16 @@ def get_honourable_mentions():
             break
         position = input("Position: ")
         description = input("What did they do well? (describe freely): ")
-        print("⏳ Generating mention...")
+        print("Generating mention...")
         ai_note = generate_mention(username, position, description)
         if ai_note:
             # AI succeeded — show the result and let the user decide
-            print(f"\n🤖 AI generated: {ai_note}\n")
+            print(f"\nClaude generated: {ai_note}\n")
             use_ai = input("Use this? (yes/no): ").lower() == "yes"
             note = ai_note if use_ai else input("Write your own note: ")
         else:
             # AI failed (no credits, no internet, etc.) — fall back to manual
-            print("⚠️ AI unavailable, switching to manual input.")
+            print("Anthropic API unavailable, switching to manual input.")
             note = input("Write your own note: ")
         mentions.append({
             "username": username,
@@ -435,7 +436,7 @@ def main():
         "enemy_scorers": enemy_scorers
     }
     save_match_history(match_record)
-    print("✅ Match history saved.")
+    print("Match history saved.")
     input("\nPress Enter to exit...")
 
 main()

@@ -1,7 +1,8 @@
 import json
 import os
-
-STATS_FILE = "stats.json"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+STATS_FILE = os.path.join(BASE_DIR, "stats.json")
+HISTORY_FILE = os.path.join(BASE_DIR, "match_history.json")
 
 def load_stats():
     if os.path.exists(STATS_FILE):
@@ -71,7 +72,7 @@ if not stats:
     print("No stats found.")
 else:
     lines = []
-    lines.append(f"> ## *Season Statistics* 🏆 || @everyone ||")
+    lines.append(f"> ## *Season Statistics* || @everyone ||")
     lines += build_leaderboard(stats)
     print("\n========== COPY THIS ==========\n")
     print("\n".join(lines))
