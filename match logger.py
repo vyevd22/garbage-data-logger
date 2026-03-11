@@ -119,7 +119,7 @@ def generate_mention(username, position, description):
             messages=[
                 {
                     "role": "user",
-                    "content": f"Write a short 'honourable mention' report for a football player in a Discord match report. Player: {username} [{position}]. What they did: {description}. Keep it to one or two sentences, no longer. Do not use quotation marks. Refrain from using the player's name in the report, just refer to them as 'they' or 'them'."
+                    "content": f"Write a short 'honourable mention' report for a football player in a Discord match report. Player: {username} [{position}]. What they did: {description}. Keep it to one or two sentences, no longer. Do not use quotation marks. Do not add any unnecessary explanation or preamble. Refrain from using the player's name in the report, just refer to them as 'they' or 'them'."
                 }
             ]
         )
