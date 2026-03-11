@@ -110,8 +110,6 @@ def get_suffix(count, type="goal"):
 #  ==========================================================================================
 
 def generate_mention(username, position, description):
-    # If the API call fails for any reason (no credits, no internet, etc.)
-    # return None instead of crashing so we can fall back to manual input
     try:
         client = Anthropic()
         message = client.messages.create(
@@ -120,12 +118,15 @@ def generate_mention(username, position, description):
             messages=[
                 {
                     "role": "user",
-                    "content": f"Write a short 'honourable mention' report for a football player in a Discord match report. Player: {username} [{position}]. What they did: {description}. Keep it to one or two sentences, no longer. Do not use quotation marks. Do not add any unnecessary explanation or preamble. Refrain from using the player's name in the report, just refer to them as 'they' or 'them'."
+                    "content": f"Write a short honourable mention for a football player in a Discord match report. Position: {position}. What they did: {description}. Rules: one or two sentences maximum, no quotation marks, no preamble, do not use the player's username or any name at all, only refer to the player as 'they' or 'them'."
                 }
             ]
         )
         return message.content[0].text
     except Exception:
+#    If the AI fails for any particular reason (no credits, no internet, API error, etc.),
+#       we don't want the whole program to crash, so I just make it skip the AI mention
+#                     and let the user write their own summary manually.
         return None
 
 #  =======================
@@ -169,11 +170,14 @@ def get_match_info():
     competition = input("Competition name: ")
     home_team = input("Home team: ")
     away_team = input("Away team: ")
+    home_away_question = input("Did you play as the home team? (yes/no): ").lower()
     home_score = input("Home score: ")
     away_score = input("Away score: ")
     result = input("Result (WIN/LOSS/DRAW): ").upper()
     forfeit = input("Forfeit? (yes/no): ").lower() == "yes"
-    return competition, home_team, away_team, home_score, away_score, result, forfeit
+    your_team = home_team if home_away_question == "yes" else away_team
+    enemy_team = away_team if home_away_question == "yes" else home_team
+    return competition, home_team, away_team, home_score, away_score, result, forfeit, your_team, enemy_team
 
 def get_lineup():
     print("\n=== TACTICAL SETUP ===")
@@ -295,7 +299,7 @@ def group_assisters(goals):
 #   REPORT BUILDER
 #  ================
 
-def build_report(competition, home_team, away_team, home_score, away_score,
+def build_report(competition, home_team, away_team, your_team, enemy_team, home_score, away_score,
                  result, forfeit, formation, lineup, scorers, assisters,
                  enemy_scorers, mentions, motm):
 
@@ -305,7 +309,8 @@ def build_report(competition, home_team, away_team, home_score, away_score,
 
     lines = []
     lines.append(f"> ## *{competition} Result‼️* || @everyone ||")
-    lines.append(f"> # {home_team} vs {away_team}")
+    lines.append(f"> ### HOME [{home_team}] {home_score} - {away_score} [{away_team}] AWAY")
+    lines.append(f"> # {your_team} vs {enemy_team}")
     lines.append(f"-# ***{home_score}-{away_score} [ {result_text} ]***")
     lines.append(f"")
     lines.append(f"> ### __TACTICAL SETUP__:")
@@ -392,27 +397,45 @@ def update_stats(players, lineup, scorers, assisters, motm, enemy_scorers):
 #  ======
 
 def main():
-    # Load stats — comes back as {username: Player object} instead of plain dicts
+    import sys
     players = load_stats()
 
-    # Collect all match data
-    competition, home_team, away_team, home_score, away_score, result, forfeit = get_match_info()
-    formation, lineup = get_lineup()
-    goals = get_goals()
-    enemy_scorers = get_enemy_scorers()
-    mentions = get_honourable_mentions()
-    motm = get_motm()
+    if "--test" in sys.argv:
+        competition = "TEST_COMP"
+        home_team = "TEST_HOME"
+        away_team = "TEST_AWAY"
+        your_team = home_team
+        enemy_team = away_team
+        home_score = "3"
+        away_score = "1"
+        result = "WIN"
+        forfeit = False
+        formation = "2-3-1"
+        lineup = {"GK": "test_gk", "LB": "test_lb", "CB": "test_cb", "RB": "test_rb", "CM": "test_cm", "CF": "test_cf"}
+        goals = [
+            {"scorer": "test_cf", "position": "CF", "minute": 15, "assister": "test_cm", "assister_pos": "CM"},
+            {"scorer": "test_cf", "position": "CF", "minute": 30, "assister": None, "assister_pos": None},
+            {"scorer": "test_lb", "position": "LB", "minute": 45, "assister": "test_gk", "assister_pos": "GK"}
+        ]
+        enemy_scorers = ["enemy_player1"]
+        mentions = []
+        motm = "test_cf"
+    else:
+        competition, home_team, away_team, home_score, away_score, result, forfeit, your_team, enemy_team = get_match_info()
+        formation, lineup = get_lineup()
+        goals = get_goals()
+        enemy_scorers = get_enemy_scorers()
+        mentions = get_honourable_mentions()
+        motm = get_motm()
 
     # Process goals into grouped scorer/assister dictionaries
     scorers = group_scorers(goals)
     assisters = group_assisters(goals)
 
     # Build and print the Discord report
-    report_lines = build_report(
-        competition, home_team, away_team, home_score, away_score,
+    report_lines = build_report(competition, home_team, away_team, your_team, enemy_team, home_score, away_score,
         result, forfeit, formation, lineup, scorers, assisters,
-        enemy_scorers, mentions, motm
-    )
+        enemy_scorers, mentions, motm)
     print("\n\n========== COPY THIS ==========\n")
     print("\n".join(report_lines))
     print("\n================================")
@@ -420,7 +443,7 @@ def main():
     # Update stats using Player objects, then save them back to JSON
     players = update_stats(players, lineup, scorers, assisters, motm, enemy_scorers)
     save_stats(players)
-    print("\n✅ Stats saved.")
+    print("\nStats saved.")
 
     # Save full match record to history
     match_record = {
