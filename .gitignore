@@ -1,0 +1,8 @@
+.env
+stats.json
+match_history.json
+build/
+dist/
+*.spec
+*.exe
+__pycache__/
