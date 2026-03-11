@@ -6,16 +6,17 @@ dont mind me being a football nerd.
 
 ## what it does
 
-- logs match details, lineups, goals, assists, and honourable mentions through a terminal interface
+- logs match details, basic stats, and honourable mentions through a terminal interface (i havent learned anything about user interfaces or CSS or JS yet and i only know very basic HTML so you're not getting anything more advanced from me)
 - generates a formatted discord-ready match report automatically
-- tracks player statistics across matches in a persistent JSON file
-- keeps a full match history with timestamps
-- optionally uses the anthropic API to generate honourable mention summaries based on a plain text description
+- tracks player statistics across matches in a JSON file
+- keeps a full match history with timestamps if you want it for some reason (also in a JSON file)
+- optionally uses the anthropic API to generate honourable mention summaries based on a plain text description (if you wanted to do that for some reason but it seems like a waste of money to me)
+- (no seriously i spent 5 euros just to test it 😭)
 
 ## requirements
 
 - python 3.x
-- an anthropic API key (optional, only needed for AI-generated mentions)
+- an anthropic API key (completely optional and not recommended, only needed for AI-generated mentions. works well tho i wont lie)
 
 install dependencies:
 ```
