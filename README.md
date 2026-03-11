@@ -1,4 +1,4 @@
-# garbage-data-logger
+# horrendous data logger thingy
 
 a python CLI tool for logging match data and generating formatted reports. built around a football discord server use case, but the core is just structured data logging with persistent storage and optional AI-generated summaries.
 <br>
