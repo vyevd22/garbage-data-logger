@@ -144,10 +144,10 @@ def generate_html(match):
             transform: translate(-50%, -50%);
         }}
         .player-circle {{
-            width: 25px;
-            height: 25px;
-            background-color: #700F2B;
-            border: 2px solid #07011A;
+            width: 35px;
+            height: 35px;
+            background-color: #290645;
+            border: 3px solid #F5F0FA;
             border-radius: 50%;
             margin: 0 auto;
         }}
