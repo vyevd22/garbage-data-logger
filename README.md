@@ -10,7 +10,7 @@ dont mind me being a football nerd.
 - keeps a full match history with timestamps (also in a JSON file)
 - optionally uses the anthropic API to generate honourable mention summaries based on a plain text description (if you wanted to do that for some reason but it seems like a waste of money to me)
 - (no seriously i spent 5 euros just to test it 😭)
-- generates a pretty HTML match report viewer from your match history, with a formation display and everything
+- generates a pretty (not really) HTML match report viewer from your match history, with a formation display and everything (its literally built with the most basic css and html you'll find)
 
 ## requirements
 - python 3.x
