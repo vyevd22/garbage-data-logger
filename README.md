@@ -23,7 +23,7 @@ install dependencies:
 pip install anthropic python-dotenv
 ```
 
-## setup (if you, for some reason, felt the need to try out something this boring)
+## setup (for some reason)
 
 1. just clone the repo
 2. create a `.env` file in the project folder with your API key:
@@ -39,6 +39,6 @@ if you want you can also take a look at the `match_history.json` file to manuall
 
 the `.env` file is gitignored. never commit your API key, that's no bueno. stats.json and match_history.json are also gitignored as they contain personal data of mine 👅
 <br>
-i hope the code is atleast somewhat readable. i tried adding a lot of comments everywhere to explain some things (as if it's not the most basic thing in the world but whatever)
+i hope the code is atleast somewhat readable. i tried adding a lot of comments everywhere to explain some things (as if it's not the most basic thing in the world)
 <br>
 if it wasnt clear by the lack of quality this is just something i made because i was too lazy to have to do it by hand and i decided 'alright why not just add an AI API i might as well'.

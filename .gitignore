@@ -5,4 +5,5 @@ build/
 dist/
 *.spec
 *.exe
+*.html
 __pycache__/

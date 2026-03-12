@@ -7,10 +7,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-#  ===============================================
-#   \/ ALL COMMENTS ARE TO BE READ *DOWNWARDS* \/
-#  ===============================================
-
 #  ===========
 #   CONSTANTS
 #  ===========
@@ -411,15 +407,15 @@ def main():
         result = "WIN"
         forfeit = False
         formation = "2-3-1"
-        lineup = {"GK": "test_gk", "LB": "test_lb", "CB": "test_cb", "RB": "test_rb", "CM": "test_cm", "CF": "test_cf"}
+        lineup = {"GK": "test_gk", "LCB": "test_lcb", "RCB": "test_rcb", "RM": "test_rm", "CM": "test_cm", "LM": "test_lm", "CF": "test_cf"}
         goals = [
             {"scorer": "test_cf", "position": "CF", "minute": 15, "assister": "test_cm", "assister_pos": "CM"},
-            {"scorer": "test_cf", "position": "CF", "minute": 30, "assister": None, "assister_pos": None},
-            {"scorer": "test_lb", "position": "LB", "minute": 45, "assister": "test_gk", "assister_pos": "GK"}
+            {"scorer": "test_cf", "position": "CF", "minute": 30, "assister": "test_rm", "assister_pos": "RM"},
+            {"scorer": "test_lcb", "position": "LCB", "minute": 45, "assister": "test_gk", "assister_pos": "GK"}
         ]
         enemy_scorers = ["enemy_player1"]
         mentions = []
-        motm = "test_cf"
+        motm = "test_cm"
     else:
         competition, home_team, away_team, home_score, away_score, result, forfeit, your_team, enemy_team = get_match_info()
         formation, lineup = get_lineup()
@@ -456,7 +452,9 @@ def main():
         "formation": formation,
         "lineup": lineup,
         "goals": goals,
-        "enemy_scorers": enemy_scorers
+        "enemy_scorers": enemy_scorers,
+        "honourable_mentions": mentions,
+        "motm": motm
     }
     save_match_history(match_record)
     print("Match history saved.")
