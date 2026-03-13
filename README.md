@@ -11,6 +11,7 @@ dont mind me being a football nerd.
 - optionally uses the anthropic API to generate honourable mention summaries based on a plain text description (if you wanted to do that for some reason but it seems like a waste of money to me)
 - (no seriously i spent 5 euros just to test it 😭)
 - generates a pretty (not really) HTML match report viewer from your match history, with a formation display and everything (its literally built with the most basic css and html you'll find)
+- oh yeah also you can share results with your imaginary friends using an encoded hash string. i did this because i was bored.
 
 ## requirements
 - python 3.x
@@ -21,7 +22,7 @@ install dependencies:
 pip install anthropic python-dotenv
 ```
 
-## setup (if you, for some reason, felt the need to try out something this boring)
+## setup (for some reason)
 1. just clone the repo
 2. create a `.env` file in the project folder with your API key:
 ```
