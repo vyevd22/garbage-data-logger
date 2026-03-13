@@ -4,6 +4,8 @@ from collections import defaultdict
 from datetime import datetime
 from anthropic import Anthropic
 from dotenv import load_dotenv
+import zlib
+import base64
 
 load_dotenv()
 
@@ -157,6 +159,21 @@ def save_match_history(match_data):
     with open(HISTORY_FILE, "w") as f:
         json.dump(history, f, indent=2)
 
+def encode_match(match):
+    raw = json.dumps(match, ensure_ascii=False)
+    compressed = zlib.compress(raw.encode("utf-8"))
+    encoded = base64.b64encode(compressed).decode("utf-8")
+    return f"MATCH::{encoded}"
+
+def decode_match(code):
+    try:
+        encoded = code.strip().removeprefix("MATCH::")
+        compressed = base64.b64decode(encoded)
+        raw = zlib.decompress(compressed).decode("utf-8")
+        return json.loads(raw)
+    except Exception:
+        return None
+
 #  =================
 #   INPUT FUNCTIONS
 #  =================
@@ -167,13 +184,10 @@ def get_match_info():
     home_team = input("Home team: ")
     away_team = input("Away team: ")
     home_away_question = input("Did you play as the home team? (yes/no): ").lower()
-    home_score = input("Home score: ")
-    away_score = input("Away score: ")
-    result = input("Result (WIN/LOSS/DRAW): ").upper()
-    forfeit = input("Forfeit? (yes/no): ").lower() == "yes"
     your_team = home_team if home_away_question == "yes" else away_team
     enemy_team = away_team if home_away_question == "yes" else home_team
-    return competition, home_team, away_team, home_score, away_score, result, forfeit, your_team, enemy_team
+    forfeit = input("Forfeit? (yes/no): ").lower() == "yes"
+    return competition, home_team, away_team, forfeit, your_team, enemy_team
 
 def get_lineup():
     print("\n=== TACTICAL SETUP ===")
@@ -275,6 +289,34 @@ def get_motm():
 #  =================
 #   DATA PROCESSING
 #  =================
+
+def calculate_score(goals, enemy_scorers, forfeit, your_team, home_team):
+    # Count goals from the goals list for your team
+    your_goals = len(goals)
+    # Count enemy goals from the enemy scorers list
+    enemy_goals = len(enemy_scorers)
+
+    # Forfeit adds 3 to your score regardless of actual goals
+    if forfeit:
+        your_goals += 3
+
+    # Figure out which score belongs to home and which to away
+    if your_team == home_team:
+        home_score = your_goals
+        away_score = enemy_goals
+    else:
+        home_score = enemy_goals
+        away_score = your_goals
+
+    # Auto-calculate result
+    if your_goals > enemy_goals:
+        result = "WIN"
+    elif your_goals < enemy_goals:
+        result = "LOSS"
+    else:
+        result = "DRAW"
+
+    return str(home_score), str(away_score), result
 
 def group_scorers(goals):
     scorers = defaultdict(lambda: {"position": "", "minutes": []})
@@ -402,9 +444,6 @@ def main():
         away_team = "TEST_AWAY"
         your_team = home_team
         enemy_team = away_team
-        home_score = "3"
-        away_score = "1"
-        result = "WIN"
         forfeit = False
         formation = "2-3-1"
         lineup = {"GK": "test_gk", "LCB": "test_lcb", "RCB": "test_rcb", "RM": "test_rm", "CM": "test_cm", "LM": "test_lm", "CF": "test_cf"}
@@ -417,12 +456,15 @@ def main():
         mentions = []
         motm = "test_cm"
     else:
-        competition, home_team, away_team, home_score, away_score, result, forfeit, your_team, enemy_team = get_match_info()
+        competition, home_team, away_team, forfeit, your_team, enemy_team = get_match_info()
         formation, lineup = get_lineup()
         goals = get_goals()
         enemy_scorers = get_enemy_scorers()
         mentions = get_honourable_mentions()
         motm = get_motm()
+
+    # Auto-calculate score and result from goals
+    home_score, away_score, result = calculate_score(goals, enemy_scorers, forfeit, your_team, home_team)
 
     # Process goals into grouped scorer/assister dictionaries
     scorers = group_scorers(goals)
@@ -447,6 +489,7 @@ def main():
         "competition": competition,
         "home_team": home_team,
         "away_team": away_team,
+        "your_team": your_team,
         "score": f"{home_score}-{away_score}",
         "result": f"{result} + FORFEIT" if forfeit else result,
         "formation": formation,
@@ -458,6 +501,12 @@ def main():
     }
     save_match_history(match_record)
     print("Match history saved.")
+    # Offer to generate a share code for the match.
+    share = input("\nGenerate a share code for this match? (yes/no): ").lower()
+    if share == "yes":
+        code = encode_match(match_record)
+        print(f"\n{code}\n")
+        print("Copy the code above to share this match.")
     input("\nPress Enter to exit...")
 
 main()

@@ -2,6 +2,8 @@ import json
 import os
 from collections import defaultdict
 from datetime import datetime
+import zlib
+import base64
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 STATS_FILE = os.path.join(BASE_DIR, "stats.json")
@@ -18,6 +20,21 @@ def load_match_history():
         with open(HISTORY_FILE, "r") as f:
             return json.load(f)
     return []
+
+def encode_match(match):
+    raw = json.dumps(match, ensure_ascii=False)
+    compressed = zlib.compress(raw.encode("utf-8"))
+    encoded = base64.b64encode(compressed).decode("utf-8")
+    return f"MATCH::{encoded}"
+
+def decode_match(code):
+    try:
+        encoded = code.strip().removeprefix("MATCH::")
+        compressed = base64.b64decode(encoded)
+        raw = zlib.decompress(compressed).decode("utf-8")
+        return json.loads(raw)
+    except Exception:
+        return None
 
 def generate_player_circles(lineup, formation):
     formation_numbers = [int(x) for x in formation.split("-")]
@@ -67,7 +84,6 @@ def generate_player_circles(lineup, formation):
     return circles
 
 def generate_scorers(goals):
-    from collections import defaultdict
     scorers = defaultdict(list)
     for g in goals:
         scorers[g["scorer"]].append(g["minute"])
@@ -81,7 +97,6 @@ def generate_enemy_scorers(enemy_scorers):
     return "".join(f"<p><b>{name}</b> - ⚽</p>" for name in enemy_scorers)
 
 def generate_assisters(goals):
-    from collections import defaultdict
     assisters = defaultdict(list)
     for g in goals:
         if g["assister"]:
@@ -230,11 +245,11 @@ def generate_html(match):
                 </div>
             </div>
                 <div class="stats-box">
-        <div class="stats-column">
-            <h3>ENEMY SCORERS</h3>
-            {generate_enemy_scorers(enemy_scorers)}
-        </div>
-    </div>
+                  <div class="stats-column">
+                    <h3>ENEMY SCORERS</h3>
+                    {generate_enemy_scorers(enemy_scorers)}
+                </div>
+          </div>
             <div class="mentions-box">
                 <h3>HONOURABLE MENTIONS</h3>
                 {generate_mentions(match.get("honourable_mentions", []))}
@@ -246,12 +261,51 @@ def generate_html(match):
 """
     return html
 
-history = load_match_history()
-if history:
-    html = generate_html(history[-1])
-    output_path = os.path.join(BASE_DIR, "match_report.html")
-    with open(output_path, "w", encoding="utf-8") as f:
-        f.write(html)
-    print(f"Report generated: {output_path}")
+print("\n=== MATCH VIEWER ===")
+print("1. View a match report")
+print("2. Import a match from share code")
+action = input("\nPick an option (1/2): ").strip()
+
+if action == "2":
+    code = input("Paste share code: ").strip()
+    match = decode_match(code)
+    if match is None:
+        print("Invalid share code.")
+        exit()
+    history = load_match_history()
+    history.append(match)
+    with open(HISTORY_FILE, "w", encoding="utf-8") as f:
+        json.dump(history, f, indent=2)
+    print(f"Match imported: {match.get('competition', '?')} | {match.get('your_team', '?')} vs {match.get('enemy_team', '?')}")
+    view_now = input("View this match now? (yes/no): ").lower()
+    if view_now != "yes":
+        exit()
+
 else:
-    print("No matches found.")
+    history = load_match_history()
+    if not history:
+        print("No matches found.")
+        exit()
+    print("\n=== SELECT A MATCH ===\n")
+    for i, match in enumerate(history):
+        print(f"{i}. {match['date']} | {match['competition']} | {match.get('your_team', match['home_team'])} vs {match.get('enemy_team', match['away_team'])}")
+    print()
+    while True:
+        try:
+            choice = int(input(f"Pick a match (0-{len(history) - 1}): "))
+            if 0 <= choice <= len(history) - 1:
+                break
+            print(f"Please enter a number between 0 and {len(history) - 1}.")
+        except ValueError:
+            print("Please enter a valid number.")
+    match = history[choice]
+
+html = generate_html(match)
+date_str = match["date"].replace(" ", "_").replace(":", "-")
+your_team = match.get("your_team", match["home_team"])
+enemy_team = match.get("enemy_team", match["away_team"])
+filename = f"{date_str}_{your_team}_vs_{enemy_team}.html".replace(" ", "_")
+output_path = os.path.join(BASE_DIR, filename)
+with open(output_path, "w", encoding="utf-8") as f:
+    f.write(html)
+print(f"\nReport generated: {output_path}")
