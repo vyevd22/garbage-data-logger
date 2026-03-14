@@ -89,7 +89,7 @@ def generate_scorers(goals):
         scorers[g["scorer"]].append(g["minute"])
     if not scorers:
         return "<p>None</p>"
-    return "".join(f"<p><b>{name}</b> - {', '.join(str(m) + chr(39) for m in mins)}</p>" for name, mins in scorers.items())
+    return "".join(f"<p><b>{name}</b> - {', '.join(str(m) + chr(39) + "⚽" for m in mins)}</p>" for name, mins in scorers.items())
 
 def generate_enemy_scorers(enemy_scorers):
     if not enemy_scorers:
@@ -103,7 +103,7 @@ def generate_assisters(goals):
             assisters[g["assister"]].append(g["minute"])
     if not assisters:
         return "<p>None</p>"
-    return "".join(f"<p><b>{name}</b> - {', '.join(str(m) + chr(39) for m in mins)}</p>" for name, mins in assisters.items())
+    return "".join(f"<p><b>{name}</b> - {', '.join(str(m) + chr(39) + "👟" for m in mins)}</p>" for name, mins in assisters.items())
 
 def generate_mentions(mentions):
     if not mentions:
@@ -167,7 +167,7 @@ def generate_html(match):
             margin: 0 auto;
         }}
         .player-name {{
-            font-size: 9px;
+            font-size: 12px;
             color: #1a1a2e;
             font-weight: bolder;
             bottom-margin: 2px;
