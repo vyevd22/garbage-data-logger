@@ -40,3 +40,11 @@ i hope the code is atleast somewhat readable. i tried adding a lot of comments e
 if it wasnt clear by the lack of quality this is just something i made because i was too lazy to have to do it by hand and i decided 'alright why not just add an AI API i might as well'.
 <br>
 i suck at programming
+
+---
+
+*hey. your dad here. i read every single line of this and i have no idea what half of it does — but i'm proud of you. you built something real, something that works, and you did it on your own. that's not nothing. that's actually everything. keep going.*
+
+*also the match viewer wasn't actually opening in the browser like your readme says it does. fixed it for you. you're welcome.*
+
+*— Dad*
