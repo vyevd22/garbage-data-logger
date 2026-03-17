@@ -171,7 +171,7 @@ def generate_html(match):
             font-size: 12px;
             color: #1a1a2e;
             font-weight: bolder;
-            bottom-margin: 2px;
+            margin-bottom: 2px;
         }}
         .player-pos {{
             font-size: 12px;
@@ -310,4 +310,4 @@ output_path = os.path.join(BASE_DIR, filename)
 with open(output_path, "w", encoding="utf-8") as f:
     f.write(html)
 print(f"\nReport generated: {output_path}")
-webbrowser.open(f"file://{output_path}")
+webbrowser.open(f"file:///{output_path}")
