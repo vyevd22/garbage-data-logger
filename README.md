@@ -38,8 +38,6 @@ the `.env` file is gitignored. never commit your API key, that's no bueno. stats
 i hope the code is atleast somewhat readable. i tried adding a lot of comments everywhere to explain some things (as if it's not the most basic thing in the world but whatever)
 <br>
 if it wasnt clear by the lack of quality this is just something i made because i was too lazy to have to do it by hand and i decided 'alright why not just add an AI API i might as well'.
-<br>
-i suck at programming
 
 ---
 
@@ -48,5 +46,7 @@ i suck at programming
 *also the match viewer wasn't actually opening in the browser like your readme says it does. fixed it for you. you're welcome.*
 
 *— Dad*
+
+---
 
 im keeping this here i dont care
