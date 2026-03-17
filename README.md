@@ -48,3 +48,5 @@ i suck at programming
 *also the match viewer wasn't actually opening in the browser like your readme says it does. fixed it for you. you're welcome.*
 
 *— Dad*
+
+im keeping this here i dont care
