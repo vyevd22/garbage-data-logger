@@ -1,43 +1,41 @@
-# horrendous data logger thingy
-a python CLI tool for logging match data and generating formatted reports. built around a football discord server use case, but the core is just structured data logging with persistent storage and optional AI-generated summaries.
+# horrendous match logger thingy (now with a TUI because it looks cooler duh)
+a python TUI tool for logging football match data and generating formatted discord reports. built around a football discord server use case.
 <br>
 dont mind me being a football nerd.
 
 ## what it does
-- logs match details, basic stats, and honourable mentions through a terminal interface
-- generates a formatted discord-ready match report automatically
-- tracks player statistics across matches in a JSON file
-- keeps a full match history with timestamps (also in a JSON file)
-- optionally uses the anthropic API to generate honourable mention summaries based on a plain text description (if you wanted to do that for some reason but it seems like a waste of money to me)
-- (no seriously i spent 5 euros just to test it 😭)
-- generates a pretty (not really) HTML match report viewer from your match history, with a formation display and everything (its literally built with the most basic css and html you'll find)
-- oh yeah also you can share results with your imaginary friends using an encoded hash string. i did this because i was bored.
+- logs match details through a single scrollable form; competition, teams, bonus goals, lineups, scorers, assisters, MOTM, honourable mentions...
+- generates a formatted discord-ready match report you can copy straight out of the app
+- tracks player stats (appearances, goals, assists, MOTM, clean sheets) across matches in a JSON file
+- keeps a full match history with timestamps
+- generates a shareable encoded string per match so other people can import your results on their end
+- lineup generation from a formation string (e.g. `2-3-1` => 7 player rows. 2+3+1 = 6 but since there's always a GK and he's not part of the formation numbers, the formation is always given a +1. 6 + 1 = 7.)
 
 ## requirements
 - python 3.x
-- an anthropic API key (completely optional and not recommended, only needed for AI-generated mentions. works well tho i wont lie)
+- textual
+- a computer (i think)
 
 install dependencies:
 ```
-pip install anthropic python-dotenv
+pip install textual
+```
+or on arch because that's where i made this (save me):
+```
+pacman -S python-textual
 ```
 
-## setup (for some reason)
-1. just clone the repo
-2. create a `.env` file in the project folder with your API key:
+## how to run
 ```
-ANTHROPIC_API_KEY=your_key_here
+python app.py
 ```
-3. run `match logger.py` to log a match
-4. run `leaderboard.py` to view all the stats of players you inputted in that match logger
-5. run `match viewer.py` to generate an HTML report of your most recent match — opens in any browser
+that's it. navigate with arrow keys + enter, escape to go back.
+OH, just like, make sure you actually cd to the directory you have the git cloned in, lol.
 
 ## notes
-the `.env` file is gitignored. never commit your API key, that's no bueno. stats.json, match_history.json, and any generated .html files are also gitignored as they contain personal data of mine 👅
+`stats.json` and `match_history.json` are gitignored since they contain personal data.
 <br>
-i hope the code is atleast somewhat readable. i tried adding a lot of comments everywhere to explain some things (as if it's not the most basic thing in the world but whatever)
-<br>
-if it wasnt clear by the lack of quality this is just something i made because i was too lazy to have to do it by hand and i decided 'alright why not just add an AI API i might as well'.
+the share code is a compressed + base64 encoded JSON blob. completely local, no servers involved, because i dont know enough about that yet (and it seems like a waste of time)
 
 ---
 
@@ -49,4 +47,4 @@ if it wasnt clear by the lack of quality this is just something i made because i
 
 ---
 
-im keeping this here i dont care
+im keeping this here i dont care. even tho i changed the whole thing just now.
