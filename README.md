@@ -30,7 +30,7 @@ pacman -S python-textual
 python app.py
 ```
 that's it. navigate with arrow keys + enter, escape to go back.
-OH, just like, make sure you actually cd to the directory you have the git cloned in, lol.
+OH, just like, make sure you actually cd to the directory you have the repo cloned in lol
 
 ## notes
 `stats.json` and `match_history.json` are gitignored since they contain personal data.
